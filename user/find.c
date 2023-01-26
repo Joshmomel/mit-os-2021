@@ -47,9 +47,6 @@ void find(char *path, char *name)
   struct dirent de;
   struct stat st;
 
-  // printf("path is %s\n", path);
-  // printf("name is %s\n", name);
-
   if ((fd = open(path, 0)) < 0)
   {
     fprintf(2, "find: cannot open %s\n", path);
