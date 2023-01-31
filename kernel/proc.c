@@ -657,3 +657,20 @@ procdump(void)
     printf("\n");
   }
 }
+
+// Refer to procdump
+uint64
+nprocs(void)
+{
+  struct proc *p;
+  int i = 0;
+
+  for (p = proc; p < &proc[NPROC]; p++)
+  {
+    if (p->state == UNUSED)
+      continue;
+    i++;
+  }
+  
+  return i;
+}
