@@ -145,7 +145,7 @@ syscall(void)
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     p->trapframe->a0 = syscalls[num]();
     
-    // 相处这两个非常花时间
+    // 想出这两个非常花时间
     if (p->mask & 1 << num)
     {
       // syscall的output会store在p->trapframe->a0中
