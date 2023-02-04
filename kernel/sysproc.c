@@ -75,15 +75,40 @@ sys_sleep(void)
   return 0;
 }
 
-
-#ifdef LAB_PGTBL
-int
-sys_pgaccess(void)
+pte_t *walk(pagetable_t, uint64, int);
+int sys_pgaccess(void)
 {
   // lab pgtbl: your code here.
+  uint64 va;
+  int num;
+  uint64 mask_addr;
+  pte_t *pte;
+  uint mask = 0;
+
+  if (argaddr(0, &va) < 0 || argint(1, &num) < 0 || argaddr(2, &mask_addr) < 0)
+  {
+    return -1;
+  }
+
+  pte = walk(myproc()->pagetable, va, 0);
+
+  for (int i = 0; i < num; i++)
+  {
+    if ((pte[i] & PTE_A) && (pte[i] & PTE_V))
+    {
+      mask |= (1 << i);
+      pte[i] ^= PTE_A; // reset
+    }
+  }
+  
+
+  if(copyout(myproc()->pagetable, mask_addr, (char *)&mask, sizeof(mask)) < 0) 
+  {
+    return -1;
+  }
+
   return 0;
 }
-#endif
 
 uint64
 sys_kill(void)
