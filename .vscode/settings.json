@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "fs.h": "c",
+        "stat.h": "c",
+        "user.h": "c",
+        "types.h": "c",
+        "param.h": "c",
+        "sysinfo.h": "c",
+        "defs.h": "c",
+        "memlayout.h": "c"
+    }
+}
