@@ -1,0 +1,17 @@
+1. Which registers contain arguments to functions? 
+a0-a7
+a2 stores the 13 in main 
+
+
+2.1 Where is the call to function f in the assembly code for main? 
+  26:	45b1                	li	a1,12
+2.2.Where is the call to g? (Hint: the compiler may inline functions.)
+  26:	45b1                	li	a1,12
+
+
+3. At what address is the function printf located?
+0x616
+
+
+4. What value is in the register ra just after the jalr to printf in main?
+0x30 -> 0x38
