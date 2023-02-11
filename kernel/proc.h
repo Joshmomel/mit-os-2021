@@ -105,4 +105,30 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+
+  int ticks; // alram interval
+  uint64 handler; // pointer to the handler function
+  uint64 passed_ticks; // how many ticks have passed since the last call to a process's alarm handler
+  int in_handler;
+  // alarmtest.asm shows the used registers
+  uint64 epc;
+  uint64 ra;
+  uint64 sp;
+  uint64 a0;
+  uint64 a1;
+  uint64 a2;
+  uint64 a3;
+  uint64 a4;
+  uint64 a5;
+  uint64 a6;
+  uint64 a7;
+  uint64 s0;
+  uint64 s1;
+  uint64 s2;
+  uint64 s3;
+  uint64 s4;
+  uint64 s5;
+  uint64 s6;
+  uint64 s7;
+  uint64 s8;
 };

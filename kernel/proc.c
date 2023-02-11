@@ -140,6 +140,32 @@ found:
   memset(&p->context, 0, sizeof(p->context));
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
+  p->passed_ticks = 0;
+  p->handler = 0;
+  p->ticks = 0;
+
+  p->epc = 0;
+  p->ra = 0;
+  p->sp = 0;
+  p->a0 = 0;
+  p->a1 = 0;
+  p->a2 = 0;
+  p->a3 = 0;
+  p->a4 = 0;
+  p->a5 = 0;
+  p->a6 = 0;
+  p->a7 = 0;
+  p->s0 = 0;
+  p->s1 = 0;
+  p->s2 = 0;
+  p->s3 = 0;
+  p->s4 = 0;
+  p->s5 = 0;
+  p->s6 = 0;
+  p->s7 = 0;
+  p->s8 = 0;
+
+  p->in_handler = 0;
 
   return p;
 }
@@ -164,6 +190,31 @@ freeproc(struct proc *p)
   p->killed = 0;
   p->xstate = 0;
   p->state = UNUSED;
+  p->passed_ticks = 0;
+  p->handler = 0;
+  p->ticks = 0;
+  p->in_handler = 0;
+
+  p->epc = 0;
+  p->ra = 0;
+  p->sp = 0;
+  p->a0 = 0;
+  p->a1 = 0;
+  p->a2 = 0;
+  p->a3 = 0;
+  p->a4 = 0;
+  p->a5 = 0;
+  p->a6 = 0;
+  p->a7 = 0;
+  p->s0 = 0;
+  p->s1 = 0;
+  p->s2 = 0;
+  p->s3 = 0;
+  p->s4 = 0;
+  p->s5 = 0;
+  p->s6 = 0;
+  p->s7 = 0;
+  p->s8 = 0;
 }
 
 // Create a user page table for a given process,

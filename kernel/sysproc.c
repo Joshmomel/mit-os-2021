@@ -96,3 +96,49 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_sigalarm(void)
+{
+  int ticks;
+  uint64 fn;
+  struct proc *p = myproc();
+
+  if (argint(0, &ticks) < 0 || argaddr(1, &fn) < 0)
+    return -1;
+
+  p->ticks = ticks;
+  p->handler = fn;
+
+  return 0;
+}
+
+uint64
+sys_sigreturn(void)
+{
+  struct proc *p = myproc();
+
+  p->trapframe->epc = p->epc;
+  p->trapframe->ra = p->ra;
+  p->trapframe->sp = p->sp;
+  p->trapframe->a0 = p->a0;
+  p->trapframe->a1 = p->a1;
+  p->trapframe->a2 = p->a2;
+  p->trapframe->a3 = p->a3;
+  p->trapframe->a4 = p->a4;
+  p->trapframe->a5 = p->a5;
+  p->trapframe->a6 = p->a6;
+  p->trapframe->a7 = p->a7;
+  p->trapframe->s0 = p->s0;
+  p->trapframe->s1 = p->s1;
+  p->trapframe->s2 = p->s2;
+  p->trapframe->s3 = p->s3;
+  p->trapframe->s4 = p->s4;
+  p->trapframe->s5 = p->s5;
+  p->trapframe->s6 = p->s6;
+  p->trapframe->s7 = p->s7;
+  p->trapframe->s8 = p->s8;
+  p->in_handler = 0;
+
+  return 0;
+}
