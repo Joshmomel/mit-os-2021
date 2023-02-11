@@ -8,3 +8,4 @@
 - [Lab Utilities](https://github.com/Joshmomel/mit-os-2021/pull/2)
 - [Lab syscall: System calls](https://github.com/Joshmomel/mit-os-2021/pull/1)
 - [Lab: page tables](https://github.com/Joshmomel/mit-os-2021/pull/3)
+- [Lab: traps](https://github.com/Joshmomel/mit-os-2021/pull/4)
