@@ -149,6 +149,7 @@ found:
   memset(&p->context, 0, sizeof(p->context));
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
+  p->kpagetable = kvmcreate();
 
   return p;
 }
@@ -168,6 +169,9 @@ freeproc(struct proc *p)
   if (p -> usyscall)
      kfree((void*)p->usyscall);
   p->usyscall = 0;
+  if (p -> kpagetable)
+    kvmfree(p -> kpagetable);
+  p->kpagetable = 0;
   
   p->sz = 0;
   p->pid = 0;
@@ -476,11 +480,16 @@ scheduler(void)
         // before jumping back to us.
         p->state = RUNNING;
         c->proc = p;
+
+        w_satp(MAKE_SATP(p->kpagetable));
+        sfence_vma();
+
         swtch(&c->context, &p->context);
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
         c->proc = 0;
+        kvmswitch_kernel();
       }
       release(&p->lock);
     }

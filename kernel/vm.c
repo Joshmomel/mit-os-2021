@@ -49,6 +49,52 @@ kvmmake(void)
   return kpgtbl;
 }
 
+pagetable_t
+kvmcreate()
+{
+  pagetable_t pagetable;
+  int i;
+
+  pagetable = uvmcreate();
+  for (i = 1; i < 512; i++)
+  {
+    pagetable[i] = kernel_pagetable[i];
+  }
+
+  kvmmapkern(pagetable, UART0, UART0, PGSIZE, PTE_R | PTE_W);
+  kvmmapkern(pagetable, VIRTIO0, VIRTIO0, PGSIZE, PTE_R | PTE_W);
+  kvmmapkern(pagetable, CLINT, CLINT, 0x10000, PTE_R | PTE_W);
+  kvmmapkern(pagetable, PLIC, PLIC, 0x400000, PTE_R | PTE_W);
+
+  return pagetable;
+}
+
+void
+kvmfree(pagetable_t kpagetable)
+{
+  pte_t pte = kpagetable[0];
+  pagetable_t level1 = (pagetable_t)PTE2PA(pte);
+  for (int i = 0; i < 512; i++)
+  {
+    pte_t pte = level1[i];
+    if (pte & PTE_V)
+    {
+      uint64 level2 = PTE2PA(pte);
+      kfree((void *)level2);
+      level1[i] = 0;
+    }
+  }
+  kfree((void *)level1);
+  kfree((void *)kpagetable);
+}
+
+void
+kvmswitch_kernel()
+{
+  w_satp(MAKE_SATP(kernel_pagetable));
+  sfence_vma();
+}
+
 // Initialize the one kernel_pagetable
 void
 kvminit(void)
@@ -128,6 +174,13 @@ kvmmap(pagetable_t kpgtbl, uint64 va, uint64 pa, uint64 sz, int perm)
 {
   if(mappages(kpgtbl, va, sz, pa, perm) != 0)
     panic("kvmmap");
+}
+
+// Similar to kvmmap but different error message
+void kvmmapkern(pagetable_t kpgtbl, uint64 va, uint64 pa, uint64 sz, int perm)
+{
+  if (mappages(kpgtbl, va, sz, pa, perm) != 0)
+    panic("kvmmapkern");
 }
 
 // Create PTEs for virtual addresses starting at va that refer to
