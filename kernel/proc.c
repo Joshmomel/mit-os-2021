@@ -260,6 +260,7 @@ userinit(void)
   // allocate one user page and copy init's instructions
   // and data into it.
   uvminit(p->pagetable, initcode, sizeof(initcode));
+  kvmmapuser(p->kpagetable, p->pagetable, sizeof(initcode), 0);
   p->sz = PGSIZE;
 
   // prepare for the very first "return" from kernel to user.
@@ -287,6 +288,7 @@ growproc(int n)
     if((sz = uvmalloc(p->pagetable, sz, sz + n)) == 0) {
       return -1;
     }
+    kvmmapuser(p->kpagetable, p->pagetable, sz, sz - n);
   } else if(n < 0){
     sz = uvmdealloc(p->pagetable, sz, sz + n);
   }
@@ -340,6 +342,7 @@ fork(void)
 
   acquire(&np->lock);
   np->state = RUNNABLE;
+  kvmmapuser(np->kpagetable, np->pagetable, np->sz, 0);
   release(&np->lock);
 
   return pid;
