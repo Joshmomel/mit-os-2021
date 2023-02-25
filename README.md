@@ -9,3 +9,5 @@
 - [Lab syscall: System calls](https://github.com/Joshmomel/mit-os-2021/pull/1)
 - [Lab: page tables](https://github.com/Joshmomel/mit-os-2021/pull/3)
 - [Lab: traps](https://github.com/Joshmomel/mit-os-2021/pull/4)
+- [Lab: lazy](https://github.com/Joshmomel/mit-os-2021/pull/5)
+
