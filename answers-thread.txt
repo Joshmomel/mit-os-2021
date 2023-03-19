@@ -1,0 +1,1 @@
+the program is not thread-safe. When multiple threads access the same data concurrently without synchronization, it can lead to data races, where the result of the computation depends on the order in which the threads execute.
