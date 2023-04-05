@@ -13,3 +13,4 @@
 - [Lab: cow](https://github.com/Joshmomel/mit-os-2021/pull/6)
 - [lab: thread](https://github.com/Joshmomel/mit-os-2021/pull/7)
 - [lab: net](https://github.com/Joshmomel/mit-os-2021/pull/8)
+- [lab: locks](https://github.com/Joshmomel/mit-os-2021/pull/9)
