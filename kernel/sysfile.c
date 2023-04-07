@@ -316,6 +316,42 @@ sys_open(void)
     }
   }
 
+  if (!(omode & O_NOFOLLOW)) {
+    int depth = 0;
+    // While the current inode is a symlink and we haven't reached the maximum depth.
+    while (ip->type == T_SYMLINK && depth < 10) {
+      char target[MAXPATH];
+      int n = readi(ip, 0, (uint64)target, 0, MAXPATH);
+      if (n < 0 || n >= MAXPATH) {
+        iunlockput(ip);
+        end_op();
+        return -1;
+      }
+
+      // Find the next inode based on the target of the current symlink.
+      struct inode *next_ip = namei(target); 
+      
+      if (next_ip == 0) {
+        iunlockput(ip);
+        end_op();
+        return -1;
+      }
+
+      iunlockput(ip);
+      ilock(next_ip);
+      ip = next_ip;
+
+      depth++;
+      printf("depth is %d\n", depth);
+    }
+
+    if (depth >= 10) {
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
+  }
+
   if(ip->type == T_DEVICE && (ip->major < 0 || ip->major >= NDEV)){
     iunlockput(ip);
     end_op();
@@ -487,5 +523,29 @@ sys_pipe(void)
 
 uint64 sys_symlink(void)
 {
+  char target[MAXPATH], path[MAXPATH];
+  struct inode *ip;
+
+  if (argstr(0, target, MAXPATH) < 0)
+    return -1;
+  if (argstr(1, path, MAXPATH) < 0)
+    return -1;
+
+  begin_op();
+  ip = create(path, T_SYMLINK, 0, 0);
+
+  if (ip == 0) {
+    end_op();
+    return -1;
+  }
+
+  if (writei(ip, 0, (uint64)target, 0, strlen(target)) < 0) {
+    end_op();
+    return -1;
+  }
+
+  iunlockput(ip);
+  end_op();
+
   return 0;
 }
